@@ -1,0 +1,193 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>ChatVerse</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#f3f4f8;--p1:#fff;--p2:#e9ebf2;--tx:#1b1d29;--mu:#6a6f85;--ln:#d9dce8;--ac:#2f7cf6;--act:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12131a;--p1:#1a1c26;--p2:#222533;--tx:#e8eaf4;--mu:#8e93ab;--ln:#2d3042}}
+:root[data-theme="dark"]{--bg:#12131a;--p1:#1a1c26;--p2:#222533;--tx:#e8eaf4;--mu:#8e93ab;--ln:#2d3042}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:var(--bg);color:var(--tx);font:15px/1.45 'Bricolage Grotesque',system-ui,sans-serif}
+button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+#app{display:grid;grid-template-columns:68px 240px 1fr 220px;height:100%}
+.rail{background:var(--p2);display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 0;overflow:auto}
+.sv{width:46px;height:46px;border-radius:16px;background:var(--p1);font-size:22px;display:grid;place-items:center;transition:border-radius .15s}
+.sv:hover,.sv.on{border-radius:23px;background:var(--ac);color:var(--act)}
+.side,.mem{background:var(--p1);border-right:1px solid var(--ln);display:flex;flex-direction:column;min-height:0;overflow:auto}
+.mem{border:0;border-left:1px solid var(--ln);padding:12px}
+.hd{padding:14px;font-weight:800;border-bottom:1px solid var(--ln);display:flex;justify-content:space-between;align-items:center}
+.cat{padding:14px 14px 4px;color:var(--mu);font-size:12px;font-weight:600}
+.ch{display:flex;gap:8px;width:calc(100% - 12px);margin:1px 6px;padding:6px 10px;border-radius:8px;text-align:left}
+.ch:hover{background:var(--p2)}.ch.on{background:var(--p2);font-weight:600}
+.main{display:flex;flex-direction:column;min-height:0;min-width:0}
+#msgs{flex:1;overflow:auto;padding:12px 18px}
+.m{display:flex;gap:12px;padding:6px 8px;border-radius:10px;position:relative}.m:hover{background:var(--p2)}
+.av{width:38px;height:38px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;font-weight:800;position:relative}
+.dot{position:absolute;right:-2px;bottom:-2px;width:12px;height:12px;border-radius:50%;border:2px solid var(--p1)}
+.on-line{background:#3ccf7a}.idle{background:#f1b84b}.dnd{background:#e5534b}.invisible,.offline{background:#7b8099}
+.nm{font-weight:600}.ts{color:var(--mu);font-size:12px;margin-left:6px}
+.rp{color:var(--mu);font-size:12px;border-left:3px solid var(--ln);padding-left:8px;margin-bottom:2px}
+.acts{position:absolute;right:8px;top:-12px;display:none;background:var(--p1);border:1px solid var(--ln);border-radius:8px}.m:hover .acts{display:flex}
+.acts button{padding:4px 8px}.acts button:hover{background:var(--p2)}
+.rx{display:inline-flex;gap:4px;border:1px solid var(--ln);border-radius:12px;padding:1px 8px;margin:4px 4px 0 0;background:var(--p1)}.rx.me{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 18%,transparent)}
+.comp{padding:0 18px 16px}.comp .row{display:flex;gap:8px;background:var(--p2);border-radius:12px;padding:6px}
+.comp textarea{flex:1;background:none;border:0;resize:none;outline:0;height:38px;padding:8px}
+.btn{background:var(--ac);color:var(--act);padding:8px 14px;border-radius:10px;font-weight:600}.btn.g{background:var(--p2);color:var(--tx)}.btn.r{background:#e5534b;color:#fff}
+.in{width:100%;background:var(--p2);border:1px solid var(--ln);border-radius:10px;padding:9px 12px;margin:4px 0 10px}
+#modal{position:fixed;inset:0;background:#0008;display:none;place-items:center;padding:16px;z-index:5}#modal.show{display:grid}
+.box{background:var(--p1);border-radius:16px;padding:20px;width:min(480px,100%);max-height:88vh;overflow:auto}.box h3{margin:0 0 10px}
+.auth{display:grid;place-items:center;height:100%;padding:16px}.auth .box{width:min(400px,100%)}
+.mrow{display:flex;gap:8px;align-items:center;padding:4px;border-radius:8px;width:100%;text-align:left}.mrow:hover{background:var(--p2)}
+.sw{width:26px;height:26px;border-radius:50%;display:inline-block;margin:2px}
+.banner{background:var(--p2);border-radius:10px;padding:10px 14px;margin:8px 18px;color:var(--mu)}
+.mu{color:var(--mu)}.tag{font-size:11px;border-radius:6px;padding:0 6px;background:var(--p2);color:var(--mu)}
+.emo{display:flex;flex-wrap:wrap;gap:2px}.emo button{font-size:22px;padding:4px;border-radius:8px}.emo button:hover{background:var(--p2)}
+#nav{display:none}
+@media(max-width:860px){#app{grid-template-columns:60px 1fr}.mem{display:none}.side{position:fixed;inset:0 0 0 60px;z-index:3;display:none}.side.open{display:flex}.rail{grid-row:1/3}#nav{display:inline-block}}
+</style></head><body><div id="app"></div><div id="modal"></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9),COL=['#2f7cf6','#e8685a','#e0a23a','#35b58a','#a35be0','#e05b9d','#3bb0c9'];
+const EMO='😀😂😍🥳😎🤔😢😡👍👎👏🙏🔥✨🎉💯❤️💜🚀🎮🎧📌👀🍕☕🌈🐱🐶'.match(/\p{Extended_Pictographic}\uFE0F?/gu);
+const ROLES={owner:'Owner',admin:'Admin',mod:'Moderator',member:'Member'},RK=['member','mod','admin','owner'];
+const ICON={text:'#',voice:'🔊',announce:'📢',forum:'🗂',media:'🖼'};
+let db,me=null,sid=null,cid=null,draft='',replyTo=null,editing=null;
+function load(){try{db=JSON.parse(localStorage.getItem('cv')||'null')}catch(e){}
+ if(!db)db={users:{},servers:{},sess:null,reset:{}};seed();}
+function save(){try{localStorage.setItem('cv',JSON.stringify(db))}catch(e){toast('Storage is full; export and clear old data.')}}
+async function hash(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('cv:'+p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function mkServer(name,icon,owner,pub,desc){const g=uid(),c1=uid(),c2=uid(),c3=uid(),v=uid();
+ return db.servers[g]={id:g,name,icon,desc:desc||'',pub,owner,members:{[owner]:'owner'},
+  rules:'Be kind. No spam. Keep it friendly.',
+  channels:[{id:c1,name:'welcome',type:'announce',cat:'Start here'},{id:c2,name:'general',type:'text',cat:'Chat'},{id:c3,name:'showcase',type:'media',cat:'Chat'},{id:uid(),name:'ideas',type:'forum',cat:'Chat'},{id:v,name:'lounge',type:'voice',cat:'Voice',vc:[]}],
+  msgs:{},invites:[],audit:[],custom:[]}}
+function seed(){if(db.servers.hq)return;db.users.bot={id:'bot',name:'verse',dn:'Verse Bot',tag:'0001',col:'#35b58a',st:'online',bio:'Friendly bot.',bot:1};
+ const s=mkServer('ChatVerse HQ','🌌','bot',true,'The official home of ChatVerse. Everything here is free, forever.');s.id='hq';db.servers.hq=s;delete db.servers[Object.keys(db.servers).find(k=>k!=='hq'&&db.servers[k]===s)];
+ const g=s.channels[1].id;s.msgs[s.channels[0].id]=[{id:uid(),u:'bot',t:Date.now(),text:'Welcome to ChatVerse. No Nitro, no ads, no paywalls. Every feature is free for everyone.',react:{}}];
+ s.msgs[g]=[{id:uid(),u:'bot',t:Date.now(),text:'Say hi! Try replying, reacting or editing a message. Type /help for commands.',react:{}}];save()}
+const U=id=>db.users[id]||{dn:'Unknown',tag:'0000',col:'#7b8099',st:'offline'};
+const S=()=>db.servers[sid],C=()=>S()?.channels.find(c=>c.id===cid);
+const role=(s=S())=>s?.members[me.id],lvl=r=>RK.indexOf(r);
+const can=(min)=>lvl(role())>=lvl(min);
+const stOf=u=>u.st==='invisible'?'offline':(u.st==='online'?'on-line':u.st);
+const av=(u,dot)=>`<div class="av" style="background:${u.col}">${u.img?`<img src="${esc(u.img)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`:esc((u.dn||'?')[0].toUpperCase())}${dot?`<i class="dot ${stOf(u)}"></i>`:''}</div>`;
+function toast(t){const e=document.createElement('div');e.textContent=t;e.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:8px 16px;border-radius:10px;z-index:9';document.body.append(e);setTimeout(()=>e.remove(),2600)}
+function modal(h){const m=$('#modal');m.innerHTML=h?`<div class="box">${h}</div>`:'';m.classList.toggle('show',!!h)}
+$('#modal').onclick=e=>{if(e.target.id==='modal')modal()};
+function audit(t){S().audit.unshift({t:Date.now(),u:me.id,a:t});S().audit=S().audit.slice(0,100)}
+function applyTheme(){const r=document.documentElement;if(me){r.style.setProperty('--ac',me.col);r.dataset.theme=me.theme||'auto'}else{r.removeAttribute('data-theme')}}
+/* ---------- auth ---------- */
+function authView(mode='in'){applyTheme();$('#app').style.display='block';$('#app').innerHTML=`<div class="auth"><div class="box"><h2 style="margin:0 0 4px;font-size:28px">ChatVerse</h2><p class="mu" style="margin:0 0 14px">Free chat for every community. No ads, no paywalls.</p>
+ ${mode==='up'?`<label>Username<input class="in" id="a_un" autocomplete="username" placeholder="lowercase, no spaces"></label>`:''}
+ <label>Email<input class="in" id="a_em" type="email" autocomplete="email"></label>
+ <label>${mode==='reset'?'New password':'Password'}<input class="in" id="a_pw" type="password" autocomplete="current-password"></label>
+ <p id="a_er" style="color:#e5534b;margin:0 0 8px"></p>
+ <button class="btn" style="width:100%" data-a="auth-${mode}">${{in:'Log in',up:'Create account',reset:'Reset password'}[mode]}</button>
+ <p style="text-align:center" class="mu">${mode==='in'?`<a href="#" data-a="mode-up">Create an account</a> · <a href="#" data-a="mode-reset">Forgot password?</a>`:`<a href="#" data-a="mode-in">Back to log in</a>`}</p></div></div>`}
+async function doAuth(mode){const em=$('#a_em').value.trim().toLowerCase(),pw=$('#a_pw').value,er=m=>$('#a_er').textContent=m;
+ if(!/^\S+@\S+\.\S+$/.test(em))return er('Enter a valid email address.');if(pw.length<8)return er('Use a password of at least 8 characters.');
+ const h=await hash(pw),u=Object.values(db.users).find(x=>x.em===em);
+ if(mode==='in'){if(!u||u.pw!==h)return er('Email or password is incorrect.');login(u)}
+ else if(mode==='reset'){if(!u)return er('No account uses that email.');u.pw=h;save();er('');toast('Password updated. Log in with it now.');authView('in')}
+ else{const un=$('#a_un').value.trim().toLowerCase();if(!/^[a-z0-9_.]{3,20}$/.test(un))return er('Username: 3–20 letters, numbers, _ or .');
+  if(u)return er('That email already has an account.');if(Object.values(db.users).some(x=>x.name===un))return er('That username is taken.');
+  const n={id:uid(),name:un,dn:un,tag:String(Math.floor(1000+Math.random()*9000)),em,pw:h,col:COL[Math.floor(Math.random()*COL.length)],st:'online',bio:'',pron:'',cs:'',friends:[],blocked:[],pending:[],seen:Date.now(),verified:true,theme:'auto'};
+  db.users[n.id]=n;db.servers.hq.members[n.id]='member';save();login(n)}}
+function login(u){me=u;db.sess=u.id;sid='hq';cid=S().channels[1].id;save();$('#app').style.display='grid';applyTheme();render()}
+/* ---------- main render ---------- */
+function render(){if(!me)return authView();me.seen=Date.now();const s=S()||(sid=Object.keys(db.servers).find(k=>db.servers[k].members[me.id]),S());
+ if(!s){$('#app').innerHTML=`<div class="auth"><div class="box"><h3>You're not in any server</h3><button class="btn" data-a="new-server">Create a server</button> <button class="btn g" data-a="discover">Discover</button></div></div>`;return}
+ if(!C()||!s.channels.includes(C()))cid=s.channels.find(c=>c.type!=='voice')?.id;
+ const joined=Object.keys(db.servers).filter(k=>db.servers[k].members[me.id]),cats=[...new Set(s.channels.map(c=>c.cat))];
+ const ch=C(),mem=Object.keys(s.members).map(id=>({...U(id),id,r:s.members[id]})).filter(u=>u.st!=='invisible'||u.id===me.id);
+ const on=mem.filter(u=>u.st!=='offline'&&(Date.now()-(db.users[u.id].seen||0)<6e5||u.bot)),off=mem.filter(u=>!on.includes(u));
+ const row=u=>`<button class="mrow" data-a="profile" data-id="${u.id}">${av(u,1)}<span><span class="nm" style="color:${u.r!=='member'?u.col:'inherit'}">${esc(u.dn)}</span>${u.bot?' <span class="tag">BOT</span>':''}<br><small class="mu">${esc(u.cs||ROLES[u.r])}</small></span></button>`;
+ $('#app').innerHTML=`<nav class="rail">${joined.map(k=>`<button class="sv ${k===sid?'on':''}" data-a="srv" data-id="${k}" title="${esc(db.servers[k].name)}">${esc(db.servers[k].icon)}</button>`).join('')}
+  <button class="sv" data-a="new-server" title="Create server">＋</button><button class="sv" data-a="discover" title="Discover servers">🧭</button></nav>
+ <aside class="side" id="side"><div class="hd"><button data-a="srv-menu" style="font-weight:800;font-size:15px">${esc(s.name)} ▾</button></div>
+  <div style="flex:1">${cats.map(c=>`<div class="cat">${esc(c)}</div>${s.channels.filter(x=>x.cat===c).map(x=>`<button class="ch ${x.id===cid?'on':''}" data-a="chan" data-id="${x.id}"><span class="mu">${ICON[x.type]}</span>${esc(x.name)}</button>${x.type==='voice'&&x.vc.length?x.vc.map(v=>`<div style="padding:0 32px" class="mu">• ${esc(U(v).dn)}</div>`).join(''):''}`).join('')}`).join('')}
+  ${can('admin')?`<button class="ch mu" data-a="new-chan">＋ New channel</button>`:''}</div>
+  <div style="padding:10px;border-top:1px solid var(--ln);display:flex;gap:8px;align-items:center">${av(me,1)}<div style="flex:1;min-width:0"><div class="nm">${esc(me.dn)}</div><small class="mu">${esc(me.cs||me.name+'#'+me.tag)}</small></div><button data-a="settings" title="Settings" aria-label="Settings">⚙️</button></div></aside>
+ <main class="main"><div class="hd"><span><button id="nav" data-a="nav" aria-label="Channels">☰ </button>${ICON[ch.type]} ${esc(ch.name)} <span class="tag">${ch.type}</span></span><span><button data-a="search" aria-label="Search messages">🔍</button> <button data-a="friends" aria-label="Friends">👥</button></span></div>
+  ${ch.type==='voice'?voiceView(ch):`<div id="msgs">${msgsHtml(ch)}</div>${ch.type==='announce'&&!can('mod')?`<div class="banner">Only moderators and above can post in announcement channels.</div>`:composer(ch)}`}</main>
+ <aside class="mem"><b>Online — ${on.length}</b>${on.map(row).join('')}<b style="margin-top:12px;display:block">Offline — ${off.length}</b>${off.map(row).join('')}</aside>`;
+ const m=$('#msgs');if(m)m.scrollTop=m.scrollHeight;const t=$('#in');if(t&&draft){t.value=draft}}
+function voiceView(ch){const inV=ch.vc.includes(me.id);return`<div style="padding:24px;flex:1"><h3>${esc(ch.name)}</h3><p class="mu">Join to appear in the room. Audio streaming needs a media server, so this preview shows presence only.</p>
+ <button class="btn ${inV?'r':''}" data-a="vc">${inV?'Leave voice':'Join voice'}</button><div style="margin-top:16px">${ch.vc.map(v=>`<div class="mrow">${av(U(v))}${esc(U(v).dn)}</div>`).join('')||'<span class="mu">Nobody is here yet.</span>'}</div></div>`}
+function fmt(t){return esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>').replace(/`(.+?)`/g,'<code>$1</code>').replace(/~~(.+?)~~/g,'<s>$1</s>').replace(/(https?:\/\/[^\s<]+)/g,u=>/\.(png|jpe?g|gif|webp)$/i.test(u)?`<br><img src="${u}" alt="" style="max-width:320px;max-height:240px;border-radius:10px" onerror="this.replaceWith(Object.assign(document.createElement('a'),{href:'${u}',textContent:'${u}',target:'_blank',rel:'noopener'}))">`:`<a href="${u}" target="_blank" rel="noopener noreferrer">${u}</a>`).replace(/@(\w+)/g,(a,n)=>Object.values(db.users).some(u=>u.name===n)?`<b style="color:var(--ac)">${a}</b>`:a)}
+function msgsHtml(ch){const L=(S().msgs[ch.id]||[]).filter(m=>!(me.blocked||[]).includes(m.u));if(!L.length)return`<div class="banner">${ch.type==='forum'?'No posts yet. Start the first topic.':'This is the start of #'+esc(ch.name)+'. Say something.'}</div>`;
+ return L.map(m=>{const u=U(m.u),rp=m.rp&&(S().msgs[ch.id]||[]).find(x=>x.id===m.rp),own=m.u===me.id;
+ return`<div class="m" id="m${m.id}"><div>${av(u)}</div><div style="min-width:0"><div><span class="nm" style="color:${S().members[m.u]&&S().members[m.u]!=='member'?u.col:'inherit'}">${esc(u.dn)}</span>${u.bot?' <span class="tag">BOT</span>':''}<span class="ts">${new Date(m.t).toLocaleString([], {dateStyle:'short',timeStyle:'short'})}${m.ed?' (edited)':''}</span></div>
+ ${rp?`<div class="rp">↩ ${esc(U(rp.u).dn)}: ${esc(rp.text.slice(0,60))}</div>`:''}
+ ${editing===m.id?`<textarea class="in" id="ed" style="height:60px">${esc(m.text)}</textarea><button class="btn" data-a="ed-ok" data-id="${m.id}">Save</button> <button class="btn g" data-a="ed-no">Cancel</button>`:`<div style="white-space:pre-wrap;overflow-wrap:anywhere">${fmt(m.text)}</div>`}
+ ${Object.entries(m.react||{}).filter(([,v])=>v.length).map(([e,v])=>`<button class="rx ${v.includes(me.id)?'me':''}" data-a="rx" data-id="${m.id}" data-e="${e}">${e} ${v.length}</button>`).join('')}</div>
+ <div class="acts"><button data-a="react" data-id="${m.id}" aria-label="React">😊</button><button data-a="reply" data-id="${m.id}" aria-label="Reply">↩</button>${own?`<button data-a="edit" data-id="${m.id}" aria-label="Edit">✏️</button>`:''}${own||can('mod')?`<button data-a="del" data-id="${m.id}" aria-label="Delete">🗑</button>`:''}</div></div>`}).join('')}
+function composer(ch){const r=replyTo&&(S().msgs[ch.id]||[]).find(x=>x.id===replyTo);
+ return`<div class="comp">${r?`<div class="rp">Replying to ${esc(U(r.u).dn)} <button data-a="reply-x">✕</button></div>`:''}<div class="row"><button data-a="emoji" aria-label="Emoji">😊</button><textarea id="in" placeholder="${ch.type==='forum'?'Start a topic…':'Message #'+esc(ch.name)}" aria-label="Message"></textarea><button class="btn" data-a="send">Send</button></div></div>`}
+function post(text,u=me.id,ch=cid){const L=S().msgs[ch]=S().msgs[ch]||[];L.push({id:uid(),u,t:Date.now(),text,rp:u===me.id?replyTo:null,react:{}});if(L.length>2000)L.shift()}
+function send(){const t=$('#in');const v=t.value.trim();if(!v)return;if(v.length>4000)return toast('Messages can be up to 4000 characters.');draft='';
+ if(v==='/help'){post('Commands: **/help**, **/shrug**, **/roll**. Formatting: **bold**, *italic*, `code`, ~~strike~~. Paste an image URL to embed it.','bot')}
+ else{post(v==='/shrug'?'¯\\_(ツ)_/¯':v==='/roll'?'🎲 '+me.dn+' rolled '+(1+Math.floor(Math.random()*20))+' (d20)':v);replyTo=null;
+  if(S().id==='hq'&&/\b(hi|hello|hey)\b/i.test(v))setTimeout(()=>{post('Hey '+me.dn+'! Welcome to ChatVerse.','bot',cid);save();render()},900)}
+ save();render();$('#in')?.focus()}
+/* ---------- actions ---------- */
+const act={
+ 'mode-in':()=>authView('in'),'mode-up':()=>authView('up'),'mode-reset':()=>authView('reset'),
+ 'auth-in':()=>doAuth('in'),'auth-up':()=>doAuth('up'),'auth-reset':()=>doAuth('reset'),
+ nav:()=>$('#side').classList.toggle('open'),
+ srv:d=>{sid=d.id;cid=null;render()},chan:d=>{draft='';cid=d.id;replyTo=null;render()},send,
+ reply:d=>{replyTo=d.id;render();$('#in')?.focus()},'reply-x':()=>{replyTo=null;render()},
+ edit:d=>{editing=d.id;render()},'ed-no':()=>{editing=null;render()},
+ 'ed-ok':d=>{const m=S().msgs[cid].find(x=>x.id===d.id),v=$('#ed').value.trim();if(v){m.text=v;m.ed=1}editing=null;save();render()},
+ del:d=>{const L=S().msgs[cid],i=L.findIndex(x=>x.id===d.id);if(L[i].u!==me.id)audit('Deleted a message by '+U(L[i].u).dn+' in #'+C().name);L.splice(i,1);save();render()},
+ rx:d=>{const m=S().msgs[cid].find(x=>x.id===d.id),a=m.react[d.e]=m.react[d.e]||[],i=a.indexOf(me.id);i<0?a.push(me.id):a.splice(i,1);save();render()},
+ react:d=>modal(`<h3>Add a reaction</h3><div class="emo">${EMO.map(e=>`<button data-a="rx" data-id="${d.id}" data-e="${e}">${e}</button>`).join('')}</div>`),
+ emoji:()=>{draft=$('#in').value;modal(`<h3>Emoji</h3><div class="emo">${EMO.map(e=>`<button data-a="ins" data-e="${e}">${e}</button>`).join('')}</div>`)},
+ ins:d=>{draft+=d.e;modal();render();$('#in').focus()},
+ vc:()=>{const c=C(),i=c.vc.indexOf(me.id);i<0?c.vc.push(me.id):c.vc.splice(i,1);save();render()},
+ 'new-server':()=>modal(`<h3>Create a server</h3><input class="in" id="n_n" placeholder="Server name"><input class="in" id="n_i" placeholder="Icon emoji" maxlength="2" value="🚀"><textarea class="in" id="n_d" placeholder="Description"></textarea><label><input type="checkbox" id="n_p"> Public (listed in discovery)</label><hr class="mu"><b>Or join with an invite code</b><input class="in" id="n_c" placeholder="Invite code"><button class="btn" data-a="mk-srv">Create</button> <button class="btn g" data-a="join-code">Join</button>`),
+ 'mk-srv':()=>{const n=$('#n_n').value.trim();if(!n)return toast('Give the server a name.');const s=mkServer(n,$('#n_i').value||'🚀',me.id,$('#n_p').checked,$('#n_d').value);sid=s.id;cid=s.channels[1].id;save();modal();render()},
+ 'join-code':()=>{const c=$('#n_c').value.trim();for(const s of Object.values(db.servers)){const v=s.invites.find(i=>i.code===c);if(v){if(v.exp&&v.exp<Date.now()||v.max&&v.uses>=v.max)return toast('This invite has expired or is used up.');v.uses++;s.members[me.id]='member';sid=s.id;cid=null;save();modal();return render()}}toast('No server matches that invite code.')},
+ discover:()=>modal(`<h3>Discover servers</h3><input class="in" id="q" placeholder="Search public servers" data-q="1"><div id="dres">${discover('')}</div>`),
+ join:d=>{db.servers[d.id].members[me.id]='member';sid=d.id;cid=null;save();modal();render()},
+ 'new-chan':()=>modal(`<h3>New channel</h3><input class="in" id="c_n" placeholder="channel-name"><select class="in" id="c_t">${Object.keys(ICON).map(t=>`<option>${t}</option>`).join('')}</select><input class="in" id="c_c" placeholder="Category" value="Chat"><button class="btn" data-a="mk-chan">Create</button>`),
+ 'mk-chan':()=>{const n=$('#c_n').value.trim().toLowerCase().replace(/\s+/g,'-');if(!n)return toast('Name the channel.');if(S().channels.length>=200)return toast('Servers can have up to 200 channels.');const t=$('#c_t').value,c={id:uid(),name:n,type:t,cat:$('#c_c').value||'Chat'};if(t==='voice')c.vc=[];S().channels.push(c);audit('Created #'+n);cid=c.id;save();modal();render()},
+ 'srv-menu':()=>{const s=S(),r=role();modal(`<h3>${esc(s.name)}</h3><p class="mu">${esc(s.desc)}</p><p><b>Rules</b><br>${esc(s.rules)}</p>
+  <button class="btn" data-a="invite">Create invite</button> <button class="btn g" data-a="roles">Members & roles</button> ${can('admin')?`<button class="btn g" data-a="audit">Audit log</button> <button class="btn g" data-a="srv-edit">Edit server</button>`:''}
+  <p>${r==='owner'?`<button class="btn r" data-a="srv-del">Delete server</button>`:`<button class="btn g" data-a="leave">Leave server</button>`}</p>`)},
+ invite:()=>modal(`<h3>Create invite</h3><label>Expires<select class="in" id="i_e"><option value="0">Never</option><option value="3600000">1 hour</option><option value="86400000">1 day</option><option value="604800000">7 days</option></select></label><label>Max uses<select class="in" id="i_m"><option value="0">Unlimited</option><option value="1">1</option><option value="10">10</option><option value="100">100</option></select></label><button class="btn" data-a="mk-inv">Generate</button>`),
+ 'mk-inv':()=>{const e=+$('#i_e').value,m=+$('#i_m').value,v={code:uid()+uid().slice(0,3),exp:e?Date.now()+e:0,max:m,uses:0};S().invites.push(v);audit('Created invite '+v.code);save();modal(`<h3>Invite ready</h3><p>Share this code. People paste it under “Create a server → Join”.</p><input class="in" readonly value="${v.code}" onclick="this.select()">`)},
+ roles:()=>modal(`<h3>Members & roles</h3>${Object.entries(S().members).map(([id,r])=>`<div class="mrow">${av(U(id))}<span style="flex:1">${esc(U(id).dn)}</span>${r==='owner'||!can('admin')||lvl(r)>=lvl(role())?`<span class="tag">${ROLES[r]}</span>`:`<select data-role="${id}">${['member','mod','admin'].filter(x=>lvl(x)<lvl(role())).map(x=>`<option value="${x}" ${x===r?'selected':''}>${ROLES[x]}</option>`).join('')}</select><button data-a="kick" data-id="${id}" aria-label="Remove">🚪</button>`}${role()==='owner'&&id!==me.id?`<button class="tag" data-a="xfer" data-id="${id}">Make owner</button>`:''}</div>`).join('')}`),
+ kick:d=>{delete S().members[d.id];audit('Removed '+U(d.id).dn);save();act.roles();render()},
+ xfer:d=>{if(!confirm('Transfer ownership to '+U(d.id).dn+'?'))return;S().members[d.id]='owner';S().members[me.id]='admin';S().owner=d.id;audit('Transferred ownership to '+U(d.id).dn);save();modal();render()},
+ audit:()=>modal(`<h3>Audit log</h3>${S().audit.map(a=>`<p><b>${esc(U(a.u).dn)}</b> ${esc(a.a)} <small class="mu">${new Date(a.t).toLocaleString()}</small></p>`).join('')||'<p class="mu">No actions recorded yet.</p>'}`),
+ 'srv-edit':()=>{const s=S();modal(`<h3>Edit server</h3><input class="in" id="e_n" value="${esc(s.name)}"><input class="in" id="e_i" value="${esc(s.icon)}" maxlength="2"><textarea class="in" id="e_d">${esc(s.desc)}</textarea><textarea class="in" id="e_r">${esc(s.rules)}</textarea><label><input type="checkbox" id="e_p" ${s.pub?'checked':''}> Public</label><br><br><button class="btn" data-a="srv-save">Save changes</button>`)},
+ 'srv-save':()=>{const s=S();Object.assign(s,{name:$('#e_n').value||s.name,icon:$('#e_i').value||s.icon,desc:$('#e_d').value,rules:$('#e_r').value,pub:$('#e_p').checked});audit('Edited server settings');save();modal();render()},
+ 'srv-del':()=>{if(!confirm('Delete this server permanently?'))return;delete db.servers[sid];sid=null;save();modal();render()},
+ leave:()=>{delete S().members[me.id];sid=null;save();modal();render()},
+ search:()=>modal(`<h3>Search this channel</h3><input class="in" id="q2" data-q2="1" placeholder="Search messages"><div id="sres"></div>`),
+ profile:d=>{const u=U(d.id),r=S()?.members[d.id];modal(`<div style="height:70px;border-radius:12px;background:${u.col}"></div><div style="margin-top:-24px;padding-left:12px">${av(u,1)}</div><h3 style="margin:8px 0 0">${esc(u.dn)} <small class="mu">${esc(u.name||'')}#${u.tag}</small></h3><p class="mu">${esc(u.pron||'')} ${r?'· '+ROLES[r]:''}</p><p>${esc(u.cs||'')}</p><p>${esc(u.bio||'No bio yet.')}</p>
+  ${d.id!==me.id&&!u.bot?`<button class="btn" data-a="fr" data-id="${d.id}">${(me.friends||[]).includes(d.id)?'Remove friend':'Add friend'}</button> <button class="btn g" data-a="blk" data-id="${d.id}">${(me.blocked||[]).includes(d.id)?'Unblock':'Block'}</button>`:''}`)},
+ fr:d=>{const f=me.friends=me.friends||[],i=f.indexOf(d.id);i<0?(db.users[d.id].pending=[...(db.users[d.id].pending||[]),me.id],toast('Friend request sent')):f.splice(i,1);save();modal()},
+ blk:d=>{const b=me.blocked=me.blocked||[],i=b.indexOf(d.id);i<0?b.push(d.id):b.splice(i,1);save();modal();render()},
+ friends:()=>{const l=id=>`<div class="mrow">${av(U(id),1)}<span style="flex:1">${esc(U(id).dn)}</span>`;modal(`<h3>Friends</h3>${(me.friends||[]).map(id=>l(id)+`<button class="tag" data-a="profile" data-id="${id}">View</button></div>`).join('')||'<p class="mu">Open a member’s profile to add them.</p>'}<h3>Pending requests</h3>${(me.pending||[]).map(id=>l(id)+`<button class="btn" data-a="accept" data-id="${id}">Accept</button> <button class="btn g" data-a="decline" data-id="${id}">Decline</button></div>`).join('')||'<p class="mu">None.</p>'}<h3>Blocked</h3>${(me.blocked||[]).map(id=>l(id)+`<button class="tag" data-a="blk" data-id="${id}">Unblock</button></div>`).join('')||'<p class="mu">None.</p>'}<h3>Recently active</h3>${Object.values(db.users).filter(u=>u.id!==me.id&&!u.bot&&u.seen).sort((a,b)=>b.seen-a.seen).slice(0,5).map(u=>l(u.id)+'</div>').join('')||'<p class="mu">Nobody yet.</p>'}`)},
+ accept:d=>{me.pending=me.pending.filter(x=>x!==d.id);(me.friends=me.friends||[]).push(d.id);(db.users[d.id].friends=db.users[d.id].friends||[]).push(me.id);save();act.friends()},
+ decline:d=>{me.pending=me.pending.filter(x=>x!==d.id);save();act.friends()},
+ settings:()=>modal(`<h3>Settings</h3><label>Display name<input class="in" id="s_dn" value="${esc(me.dn)}" maxlength="32"></label><label>Pronouns (optional)<input class="in" id="s_pr" value="${esc(me.pron||'')}"></label><label>Bio<textarea class="in" id="s_b" maxlength="300">${esc(me.bio||'')}</textarea></label><label>Custom status<input class="in" id="s_cs" value="${esc(me.cs||'')}" maxlength="80"></label>
+  <label>Status<select class="in" id="s_st">${[['online','Online'],['idle','Idle'],['dnd','Do not disturb'],['invisible','Invisible']].map(([v,t])=>`<option value="${v}" ${me.st===v?'selected':''}>${t}</option>`).join('')}</select></label><label>Profile picture URL<input class="in" id="s_im" value="${esc(me.img||'')}"></label>
+  <label>Theme<select class="in" id="s_th">${['auto','light','dark'].map(v=>`<option ${me.theme===v?'selected':''}>${v}</option>`).join('')}</select></label><div>Accent colour <span id="sw">${COL.map(c=>`<button class="sw" style="background:${c}" data-a="col" data-c="${c}" aria-label="Accent ${c}"></button>`).join('')}</span><input type="color" id="s_col" value="${me.col}"></div><br>
+  <button class="btn" data-a="s-save">Save changes</button> <button class="btn g" data-a="export">Export my data</button> <button class="btn g" data-a="logout">Log out</button> <button class="btn r" data-a="del-acc">Delete account</button><p class="mu">Everything in ChatVerse is free for everyone, forever.</p>`),
+ col:d=>{$('#s_col').value=d.c},
+ 's-save':()=>{Object.assign(me,{dn:$('#s_dn').value.trim()||me.name,pron:$('#s_pr').value,bio:$('#s_b').value,cs:$('#s_cs').value,st:$('#s_st').value,img:$('#s_im').value.trim(),theme:$('#s_th').value,col:$('#s_col').value});save();applyTheme();modal();render()},
+ export:()=>{const a=document.createElement('a'),d={profile:{...me,pw:undefined},messages:Object.values(db.servers).flatMap(s=>Object.values(s.msgs).flat().filter(m=>m.u===me.id))};a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));a.download='chatverse-data.json';a.click()},
+ logout:()=>{me.st==='online'&&0;db.sess=null;me=null;save();modal();authView()},
+ 'del-acc':()=>{if(!confirm('Delete your account and its data? This cannot be undone.'))return;Object.values(db.servers).forEach(s=>{delete s.members[me.id];Object.keys(s.msgs).forEach(k=>s.msgs[k]=s.msgs[k].filter(m=>m.u!==me.id))});delete db.users[me.id];db.sess=null;me=null;save();modal();authView()}
+};
+function discover(q){const l=Object.values(db.servers).filter(s=>s.pub&&(s.name+s.desc).toLowerCase().includes(q.toLowerCase()));return l.map(s=>`<div class="mrow"><span class="sv" style="flex:none">${esc(s.icon)}</span><span style="flex:1"><b>${esc(s.name)}</b><br><small class="mu">${esc(s.desc)} · ${Object.keys(s.members).length} members</small></span>${s.members[me.id]?'<span class="tag">Joined</span>':`<button class="btn" data-a="join" data-id="${s.id}">Join</button>`}</div>`).join('')||'<p class="mu">No public servers match.</p>'}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;if(b.tagName==='A')e.preventDefault();act[b.dataset.a]?.(b.dataset)});
+document.addEventListener('input',e=>{if(e.target.dataset.q)$('#dres').innerHTML=discover(e.target.value);if(e.target.dataset.q2){const q=e.target.value.toLowerCase();$('#sres').innerHTML=q?(S().msgs[cid]||[]).filter(m=>m.text.toLowerCase().includes(q)).map(m=>`<p><b>${esc(U(m.u).dn)}</b>: ${esc(m.text)}</p>`).join('')||'<p class="mu">No matches.</p>':''}
+ if(e.target.id==='in')draft=e.target.value});
+document.addEventListener('change',e=>{const r=e.target.dataset.role;if(r){S().members[r]=e.target.value;audit('Set '+U(r).dn+' to '+ROLES[e.target.value]);save();render()}});
+document.addEventListener('keydown',e=>{if(e.target.id==='in'&&e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}if(e.key==='Escape')modal();if(e.key==='Enter'&&['a_em','a_pw','a_un'].includes(e.target.id))$('[data-a^=auth]').click()});
+window.addEventListener('storage',e=>{if(e.key==='cv'&&me){const d=document.activeElement;if(d&&['in','ed'].includes(d.id))return;load();me=db.users[me.id];if(me&&!$('#modal').classList.contains('show'))render()}});
+setInterval(()=>{if(me){me.seen=Date.now();save()}},60000);
+load();if(db.sess&&db.users[db.sess]){me=db.users[db.sess];sid='hq';cid=null;applyTheme();render()}else authView();
+</script></body></html>
